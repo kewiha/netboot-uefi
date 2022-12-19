@@ -1,6 +1,8 @@
 #!/bin/bash -e
 #based on https://rpi4cluster.com/pxe/ipxe/
 
+scriptname="compile_ipxe.sh"
+
 #get pre-requisite packages
 apt update && apt install git make gcc binutils
 #apt install perl mkisofs syslinux liblzma-dev isolinux mtools
@@ -48,7 +50,7 @@ make bin-x86_64-efi/ipxe.efi EMBED=embed.ipxe
 
 ### check if ipxe.efi exists and report its full path
 if [[ -f ~/ipxe/src/bin-x86_64-efi/ipxe.efi ]] ; then
-	printf '%s\n' "ipxe exists at $(stat --format=%n ~/ipxe/src/bin-x86_64-efi/ipxe.efi)"
-	printf '%s\n' "success(?)"
+	printf '%s\n' "$scriptname: ipxe exists at $(stat --format=%n ~/ipxe/src/bin-x86_64-efi/ipxe.efi)"
+	printf '%s\n' "$scriptname: success(?)"
 fi
 
