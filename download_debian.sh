@@ -8,26 +8,26 @@ mount_path="/tmp/isomount"
 DEs=( "standard" "gnome" )
 flavour=( "nonfree" "nonfree" )
 ISO_sources=( "https://cdimage.debian.org/cdimage/unofficial/non-free/cd-including-firmware/current-live/amd64/iso-hybrid/" "https://cdimage.debian.org/cdimage/unofficial/non-free/cd-including-firmware/current-live/amd64/iso-hybrid/" )
-	#must NOT have trailing slash
 
 for iDE in "${!DEs[@]}" ; do
-	target_path="/z/mix/docker/common-netboot/targets/debian/${flavour[$iDE]}/${DEs[$iDE]}"
+	target_path="$target_path_base/${flavour[$iDE]}/${DEs[$iDE]}"
 	target_subdir_install="$target_path/install"
 	target_subdir_live="$target_path/live"
 
 	mkdir -p "$target_subdir_install"
 	mkdir -p "$target_subdir_live"
 
-	ISO_name="$(curl -s "${ISO_sources[$iDE]}" | grep 'debian.*amd64.*'"${DEs[$iDE]}"'.*.iso' | sed 's/.*href=\"//' | sed 's/.iso.*/.iso/')"
+	ISO_path="$(printf '%s\n' "${ISO_sources[$iDE]}/$(curl -s "${ISO_sources[$iDE]}" | grep 'debian.*amd64.*'"${DEs[$iDE]}"'.*.iso' | sed 's/.*href=\"//' | sed 's/.iso.*/.iso/')")"
+	ISO_name="$(printf '%s\n' "$ISO_path" | sed 's;.*/;;')"
 
 	### Download and mount latest ISO ###
 	#Check if we already have this version downloaded, if not download it
-	if [[ "$(ls "$target_path" | grep "$ISO_name")" == "" ]] ; then
+	if [[ "$(ls "$target_path" | grep ^"$ISO_name"$)" == "" ]] ; then
 		#Check if we have old ISOs downloaded, if so delete
 	        if [[ "$(ls -A "$target_path" | grep '.iso$' )" != "" ]] ; then
         	        rm "$target_path/"*.iso
 	        fi
-		wget -q --directory-prefix="$target_path" "${ISO_sources[$iDE]}/$ISO_name"
+		wget -q --directory-prefix="$target_path" "$ISO_path"
 		fresh_ISO="true"
 	else
 		fresh_ISO="false"
@@ -64,7 +64,9 @@ for iDE in "${!DEs[@]}" ; do
 		rm -r "$target_subdir_live/"*
 	fi
 
-	ln "$target_subdir_install/live/"* "$target_subdir_live"
+	ln "$target_subdir_install/live/"vmlinuz* "$target_subdir_live/vmlinuz"
+        ln "$target_subdir_install/live/"filesystem.squashfs "$target_subdir_live/filesystem.squashfs"
+        ln "$target_subdir_install/live/"initrd* "$target_subdir_live/initrd"
 
 	umount "$mount_path"
 done
