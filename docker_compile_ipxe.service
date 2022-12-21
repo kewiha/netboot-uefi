@@ -1,0 +1,9 @@
+[Unit]
+Description=Recompile ipxe in docker
+Requires=docker.service
+After=docker.service multi-user.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=no
+ExecStart=/z/fast/scripts/netboot/docker_compile_ipxe.sh

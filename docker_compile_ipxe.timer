@@ -1,0 +1,11 @@
+[Unit]
+Description=Recompile ipxe in docker regularly
+Requires=docker.service
+After=docker.service multi-user.target
+
+[Timer]
+OnBootSec=1w
+OnUnitActiveSec=1M
+
+[Install]
+WantedBy=timers.target
