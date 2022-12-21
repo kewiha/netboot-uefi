@@ -1,0 +1,32 @@
+#!ipxe
+:MENU
+menu
+item --gap -- ----------------- Live Distros -----------------
+item debian-nonfree-standard-live debian-nonfree-standard-live
+item debian-nonfree-gnome-live debian-nonfree-gnome-live
+item --gap -- ----------------- Diagnostics ------------------
+item memtest86plus MemTest86+
+choose --default return target && goto ${target}
+
+:memtest86plus
+set kernel_memtest86plus http://192.168.1.42/targets/memtest86plus/linux_nogrub/64/extract/EFI/BOOT/bootx64.efi
+kernel ${kernel_memtest86plus} keyboard=both nopause
+boot
+
+:debian-nonfree-standard-live
+imgfree
+set kernel_debian_nonfree_standard_live http://192.168.1.42/targets/debian/nonfree/standard/live/vmlinuz
+set squash_debian_nonfree_standard_live http://192.168.1.42/targets/debian/nonfree/standard/live/filesystem.squashfs
+set initrd_debian_nonfree_standard_live http://192.168.1.42/targets/debian/nonfree/standard/live/initrd
+kernel ${kernel_debian_nonfree_standard_live} boot=live components fetch=${squash_debian_nonfree_standard_live} initrd=initrd.magic
+initrd ${initrd_debian_nonfree_standard_live}
+boot
+
+:debian-nonfree-gnome-live
+imgfree
+set kernel_debian_nonfree_gnome_live http://192.168.1.42/targets/debian/nonfree/gnome/live/vmlinuz
+set squash_debian_nonfree_gnome_live http://192.168.1.42/targets/debian/nonfree/gnome/live/filesystem.squashfs
+set initrd_debian_nonfree_gnome_live http://192.168.1.42/targets/debian/nonfree/gnome/live/initrd
+kernel ${kernel_debian_nonfree_gnome_live} boot=live components fetch=${squash_debian_nonfree_gnome_live} initrd=initrd.magic
+initrd ${initrd_debian_nonfree_gnome_live}
+boot
