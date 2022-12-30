@@ -1,7 +1,7 @@
 [Unit]
 Description=Recompile ipxe in docker
 Requires=docker.service
-After=docker.service multi-user.target
+After=docker.service multi-user.target network-online.target
 
 [Service]
 Type=oneshot
